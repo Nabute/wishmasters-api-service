@@ -1,0 +1,51 @@
+{
+    "AccountStateAccessPolicy": {
+        "statements": [
+            {
+                "action": [
+                    "*"
+                ],
+                "principal": [
+                    "role:admin"
+                ],
+                "effect": "allow"
+            }
+        ]
+    },
+    "RoleAccessPolicy": {
+        "statements": [
+            {
+                "action": [
+                    "list",
+                    "retrieve"
+                ],
+                "principal": [
+                    "*"
+                ],
+                "effect": "allow"
+            }
+        ]
+    },
+    "UserAccessPolicy": {
+        "statements": [
+            {
+                "action": [
+                    "create"
+                ],
+                "principal": [
+                    "role:admin"
+                ],
+                "effect": "allow"
+            },
+            {
+                "action": [
+                    "list"
+                ],
+                "principal": [
+                    "*"
+                ],
+                "effect": "allow"
+            }
+        ]
+    }
+}

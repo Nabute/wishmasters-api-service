@@ -1,0 +1,19 @@
+[flake8]
+max-line-length = 120
+exclude = 
+    .git,
+    __pycache__,
+    migrations,
+    settings.py,  # If you want to ignore specific files like settings.py
+    manage.py,
+    venv,
+    env,
+    .env,
+    .venv
+max-complexity = 10
+select = B,C,E,F,W,T4,B9
+ignore = 
+    E203,  # Whitespace before ':'
+    E266,  # Too many leading '#' for block comment
+    E501,  # Line too long
+    W503   # Line break before binary operator (reversing the default for W504)

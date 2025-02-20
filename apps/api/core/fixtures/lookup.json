@@ -1,0 +1,40 @@
+[
+    {
+        "model": "core.datalookup",
+        "pk": "32343020-2edc-43c5-bcba-ac7434916ec1",
+        "fields": {
+            "created_at": "2024-09-30T11:38:28.086Z",
+            "updated_at": "2024-09-30T11:38:45.900Z",
+            "deleted_at": null,
+            "type": "account_state",
+            "name": "Active",
+            "value": "account_state_active",
+            "description": "Account is in an active state, ready for use and modification.",
+            "category": "ACCOUNT",
+            "note": "",
+            "index": 0,
+            "is_default": true,
+            "is_active": true,
+            "remark": "#00ff00"
+        }
+    },
+    {
+        "model": "core.datalookup",
+        "pk": "052fc647-adad-4807-ab12-bb8d7054137a",
+        "fields": {
+            "created_at": "2024-09-30T11:38:28.086Z",
+            "updated_at": "2024-09-30T11:38:45.900Z",
+            "deleted_at": null,
+            "type": "account_state",
+            "name": "Suspended",
+            "value": "account_state_suspended",
+            "description": "Account is in a suspended state, possibly retired or not in use.",
+            "category": "ACCOUNT",
+            "note": "",
+            "index": 1,
+            "is_default": false,
+            "is_active": true,
+            "remark": "#ffff00"
+        }
+    }
+]

@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgis/postgis
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $DB_USER -d $DB_NAME"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - wishmasters_dev_db_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    image: wishmasters:dev
+    ports:
+      - 8000:8000
+    volumes:
+      - ./apps/api:/usr/src/app
+    command: python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  wishmasters_dev_db_data:
+  wishmasters_dev_pgadmin_data:
