@@ -31,7 +31,7 @@ class AccountStateViewTest(APITestCase):
             code=RoleCode.ADMIN.value
         )
         self.user_role = Role.objects.get(
-            code=RoleCode.USER.value
+            code=RoleCode.PLAYER.value
         )
 
         # Admin user

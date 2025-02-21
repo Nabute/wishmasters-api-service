@@ -1,0 +1,16 @@
+[
+    {
+        "model": "core.systemsetting",
+        "pk": "13804a16-583c-496b-b51c-d2482e224a3d",
+        "fields": {
+            "created_at": "2025-02-21T03:41:32.186",
+            "updated_at": "2025-02-21T03:41:32.186",
+            "deleted_at": null,
+            "name": "Leaderboard Size",
+            "key": "leaderboard_size",
+            "default_value": "10",
+            "current_value": "10",
+            "data_scheme": ""
+        }
+    }
+]

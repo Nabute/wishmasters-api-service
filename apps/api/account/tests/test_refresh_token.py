@@ -23,7 +23,7 @@ class TokenRefreshViewTest(APITestCase):
         self.active_state = DataLookup.objects.get(
             value=AccountStateType.ACTIVE.value)
         self.admin_role = Role.objects.get(code=RoleCode.ADMIN.value)
-        self.user_role = Role.objects.get(code=RoleCode.USER.value)
+        self.user_role = Role.objects.get(code=RoleCode.PLAYER.value)
         self.user = User.objects.create_user(
             email=fake.email(),
             password="1234",

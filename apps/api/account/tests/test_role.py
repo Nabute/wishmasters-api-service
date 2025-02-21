@@ -26,7 +26,7 @@ class RoleAccessPolicyTestCase(TestCase):
 
         self.admin_role = Role.objects.get(
             code=RoleCode.ADMIN.value)
-        self.user_role = Role.objects.get(code=RoleCode.USER.value)
+        self.user_role = Role.objects.get(code=RoleCode.PLAYER.value)
 
         self.admin_user = User.objects.create_user(
             email=fake.email(),
@@ -60,6 +60,6 @@ class RoleAccessPolicyTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # User can only see itself
-        expected_roles = [RoleCode.USER.value]
+        expected_roles = [RoleCode.PLAYER.value]
         response_role_codes = [role['code'] for role in response.data]
         self.assertCountEqual(response_role_codes, expected_roles)

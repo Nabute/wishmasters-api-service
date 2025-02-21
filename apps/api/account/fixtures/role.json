@@ -18,8 +18,8 @@
           "created_at": "2024-08-31T11:56:33.494Z",
           "updated_at": "2024-11-01T21:45:10.426Z",
           "deleted_at": null,
-          "name": "User",
-          "code": "user",
+          "name": "Player",
+          "code": "player",
           "parents": [
             "d8840474-703c-4313-bbb8-e5d4f6143b41"
           ]

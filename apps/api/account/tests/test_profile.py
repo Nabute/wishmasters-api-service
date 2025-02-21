@@ -23,7 +23,7 @@ class ProfileViewTest(APITestCase):
         self.profile_url = reverse("profile")
         self.active_state = DataLookup.objects.get(
             value=AccountStateType.ACTIVE.value)
-        self.user_role = Role.objects.get(code=RoleCode.USER.value)
+        self.user_role = Role.objects.get(code=RoleCode.PLAYER.value)
         self.email = fake.email()
         self.name = fake.name()
         self.user = User.objects.create_user(

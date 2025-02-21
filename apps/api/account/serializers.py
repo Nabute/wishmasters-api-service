@@ -96,7 +96,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         with transaction.atomic():
-            validated_data['role'] = Role.objects.get(code=RoleCode.USER.value)
+            validated_data['role'] = Role.objects.get(code=RoleCode.PLAYER.value)
             validated_data['state'] = DataLookup.objects.get(
                 value=AccountStateType.ACTIVE.value)
 

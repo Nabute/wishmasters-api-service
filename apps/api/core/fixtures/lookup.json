@@ -1,10 +1,29 @@
 [
     {
         "model": "core.datalookup",
+        "pk": "052fc647-adad-4807-ab12-bb8d7054137a",
+        "fields": {
+            "created_at": "2024-09-30T14:38:28.086",
+            "updated_at": "2024-09-30T14:38:45.900",
+            "deleted_at": null,
+            "type": "account_state",
+            "name": "Suspended",
+            "value": "account_state_suspended",
+            "description": "Account is in a suspended state, possibly retired or not in use.",
+            "category": "ACCOUNT",
+            "note": "",
+            "index": 1,
+            "is_default": false,
+            "is_active": true,
+            "remark": "#ffff00"
+        }
+    },
+    {
+        "model": "core.datalookup",
         "pk": "32343020-2edc-43c5-bcba-ac7434916ec1",
         "fields": {
-            "created_at": "2024-09-30T11:38:28.086Z",
-            "updated_at": "2024-09-30T11:38:45.900Z",
+            "created_at": "2024-09-30T14:38:28.086",
+            "updated_at": "2024-09-30T14:38:45.900",
             "deleted_at": null,
             "type": "account_state",
             "name": "Active",
@@ -20,21 +39,135 @@
     },
     {
         "model": "core.datalookup",
-        "pk": "052fc647-adad-4807-ab12-bb8d7054137a",
+        "pk": "62837528-94d5-461d-9fa4-b448432a9b57",
         "fields": {
-            "created_at": "2024-09-30T11:38:28.086Z",
-            "updated_at": "2024-09-30T11:38:45.900Z",
+            "created_at": "2025-02-21T03:39:37.492",
+            "updated_at": "2025-02-21T03:39:37.492",
             "deleted_at": null,
-            "type": "account_state",
-            "name": "Suspended",
-            "value": "account_state_suspended",
-            "description": "Account is in a suspended state, possibly retired or not in use.",
-            "category": "ACCOUNT",
+            "type": "tiebreaker_rule",
+            "name": "First to Reach",
+            "value": "tiebreaker_rule_first_to_reach",
+            "description": "The player who achieved the score first is ranked higher.",
+            "category": "COMPETITION",
+            "note": "",
+            "index": 0,
+            "is_default": true,
+            "is_active": true,
+            "remark": "#16A085"
+        }
+    },
+    {
+        "model": "core.datalookup",
+        "pk": "70306785-8363-443e-980e-f9652cfa19b1",
+        "fields": {
+            "created_at": "2025-02-21T03:33:10.953",
+            "updated_at": "2025-02-21T03:33:10.953",
+            "deleted_at": null,
+            "type": "competition_type",
+            "name": "Multiple Attempts",
+            "value": "competition_type_multiple_attempts",
+            "description": "Participants can attempt multiple times within the competition period.",
+            "category": "COMPETITION",
             "note": "",
             "index": 1,
             "is_default": false,
             "is_active": true,
-            "remark": "#ffff00"
+            "remark": "#3498DB"
+        }
+    },
+    {
+        "model": "core.datalookup",
+        "pk": "7576f05a-2de1-4605-94d7-9a8a8dc758ee",
+        "fields": {
+            "created_at": "2025-02-21T03:32:14.790",
+            "updated_at": "2025-02-21T03:32:14.790",
+            "deleted_at": null,
+            "type": "competition_type",
+            "name": "Single Attempt",
+            "value": "competition_type_single_attempt",
+            "description": "Participants are allowed only one attempt at the competition.",
+            "category": "COMPETITION",
+            "note": "",
+            "index": 0,
+            "is_default": true,
+            "is_active": true,
+            "remark": "#FF5733"
+        }
+    },
+    {
+        "model": "core.datalookup",
+        "pk": "7de582ae-22de-4693-adec-5ef46c66bd37",
+        "fields": {
+            "created_at": "2025-02-21T03:37:44.178",
+            "updated_at": "2025-02-21T03:37:44.178",
+            "deleted_at": null,
+            "type": "ranking_method",
+            "name": "Cumulative Score",
+            "value": "ranking_method_cumulative_score",
+            "description": "The total sum of all scores achieved by a participant is used for ranking.",
+            "category": "COMPETITION",
+            "note": "",
+            "index": 2,
+            "is_default": false,
+            "is_active": true,
+            "remark": "#9B59B6"
+        }
+    },
+    {
+        "model": "core.datalookup",
+        "pk": "80f8c119-59ef-4078-b308-e68a18d71fcd",
+        "fields": {
+            "created_at": "2025-02-21T03:40:50.438",
+            "updated_at": "2025-02-21T03:40:50.438",
+            "deleted_at": null,
+            "type": "tiebreaker_rule",
+            "name": "Latest Submission",
+            "value": "tiebreaker_rule_latest_submission",
+            "description": "The player with the most recent submission is ranked higher.",
+            "category": "COMPETITION",
+            "note": "",
+            "index": 1,
+            "is_default": false,
+            "is_active": true,
+            "remark": "#E74C3C"
+        }
+    },
+    {
+        "model": "core.datalookup",
+        "pk": "d99885fb-99b2-423e-a88f-d711da2ac16b",
+        "fields": {
+            "created_at": "2025-02-21T03:36:51.578",
+            "updated_at": "2025-02-21T03:36:51.578",
+            "deleted_at": null,
+            "type": "ranking_method",
+            "name": "Average Score",
+            "value": "ranking_method_average_score",
+            "description": "The average of all scores achieved by a participant is used for ranking.",
+            "category": "COMPETITION",
+            "note": "",
+            "index": 1,
+            "is_default": false,
+            "is_active": true,
+            "remark": "#F39C12"
+        }
+    },
+    {
+        "model": "core.datalookup",
+        "pk": "f34adfa2-3048-4789-8f2a-057fcbb2fe44",
+        "fields": {
+            "created_at": "2025-02-21T03:35:45.291",
+            "updated_at": "2025-02-21T03:35:45.291",
+            "deleted_at": null,
+            "type": "ranking_method",
+            "name": "Highest Score",
+            "value": "ranking_method_highest_score",
+            "description": "The highest score achieved by a participant is used for ranking.",
+            "category": "COMPETITION",
+            "note": "",
+            "index": 0,
+            "is_default": true,
+            "is_active": true,
+            "remark": "#27AE60"
         }
     }
 ]
