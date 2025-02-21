@@ -25,7 +25,7 @@ class RegisterViewSetTest(APITestCase):
         self.active_state = DataLookup.objects.get(
             value=AccountStateType.ACTIVE.value)
         self.admin_role = Role.objects.get(code=RoleCode.ADMIN.value)
-        self.user_role = Role.objects.get(code=RoleCode.USER.value)
+        self.user_role = Role.objects.get(code=RoleCode.PLAYER.value)
 
         # Create a soft-deleted user
         self.deleted_user = User.objects.create_user(

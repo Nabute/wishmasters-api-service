@@ -47,5 +47,41 @@
                 "effect": "allow"
             }
         ]
+    },
+    "CompetitionAccessPolicy": {
+        "statements": [
+            {
+                "action": [
+                    "list",
+                    "retrieve",
+                    "leaderboard"
+                ],
+                "principal": [
+                    "*"
+                ],
+                "effect": "allow"
+            },
+            {
+                "action": [
+                    "create",
+                    "partial_update",
+                    "delete",
+                ],
+                "principal": [
+                    "role:admin"
+                ],
+                "effect": "allow"
+            },
+            {
+                "action": [
+                    "join",
+                    "submit_score"
+                ],
+                "principal": [
+                    "role:player"
+                ],
+                "effect": "allow"
+            }
+        ]
     }
 }

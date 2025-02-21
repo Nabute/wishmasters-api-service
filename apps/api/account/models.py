@@ -106,6 +106,7 @@ class User(AbstractBaseUser, AbstractBaseModel):
     role = models.ForeignKey(
         Role,
         blank=True,
+        null=True,
         on_delete=models.RESTRICT,
         related_name="+"
     )
@@ -114,6 +115,7 @@ class User(AbstractBaseUser, AbstractBaseModel):
         DataLookup,
         on_delete=models.RESTRICT,
         blank=True,
+        null=True,
         related_name="+",
         limit_choices_to={'type': "account_state"}
     )

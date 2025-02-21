@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     # INTERNAL APPS
     "core",
     "account",
+    "games"
 ]
 
 MIDDLEWARE = [
@@ -178,6 +179,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DATALOOKUP_MODEL = "core.DataLookup"
 
 AUTH_USER_MODEL = "account.User"
+
+ROLE_MODEL = "account.Role"
 
 
 REST_FRAMEWORK = {
