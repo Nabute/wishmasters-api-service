@@ -189,7 +189,6 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {
-        # TODO: make sure these values are coming from env
         'anon': '15/minute',
         'user': '60/minute'
     },
