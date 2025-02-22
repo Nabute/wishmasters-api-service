@@ -10,7 +10,6 @@ from core.models import DataLookup
 from core.enums import CompetitionType, RankingMethod, TiebreakerRule
 
 
-
 class BaseCompetitionSerializer(serializers.ModelSerializer):
     """
     Base Competition serializer containing shared fields and validation logic.
@@ -378,3 +377,17 @@ class ScoreSerializer(BaseScoreSerializer):
         instance.score = validated_data.get("score", instance.score)
         instance.save()
         return instance
+
+
+####################  LEADERBOARD  ####################
+
+
+class LeaderboardSerializer(serializers.Serializer):
+    """
+    Serializer for representing the leaderboard.
+    """
+    rank = serializers.IntegerField()
+    player_id = serializers.IntegerField()
+    player_name = serializers.CharField()
+    highest_score = serializers.IntegerField()
+    total_entries = serializers.IntegerField()

@@ -7,11 +7,12 @@ from core.viewset import AbstractModelViewSet
 from core.enums import SystemSettingKey
 from core.models import SystemSetting
 from games.permissions import CompetitionAccessPolicy
+from games.services import get_leaderboard
 
 from games.models import Competition, CompetitionEntry, Score
 from games.serializers import (
     CompetitionSerializer, CompetitionEntrySerializer, ScoreSerializer,
-    CompetitionEntryResponseSerializer
+    CompetitionEntryResponseSerializer, LeaderboardSerializer
 )
 
 
@@ -79,14 +80,12 @@ class CompetitionViewSet(AbstractModelViewSet):
 
     @action(detail=True, methods=['get'])
     def leaderboard(self, request, pk=None):
-        """
-        Retrieves the top LEADERBOARD_SIZE scores for a competition.
-        """
         competition = self.get_object()
-        leaderboard_response_count = SystemSetting.objects.get(
+
+        leaderboard_size = SystemSetting.objects.get(
             key=SystemSettingKey.LEADERBOARD_SIZE.value
         ).current_value
-        top_scores = Score.objects.filter(
-            entry__competition=competition).order_by(
-                '-score')[:int(leaderboard_response_count)]
-        return Response(ScoreSerializer(top_scores, many=True).data, status=status.HTTP_200_OK)
+
+        leaderboard_data = get_leaderboard(competition.id, limit=int(leaderboard_size))
+
+        return Response(LeaderboardSerializer(leaderboard_data, many=True).data, status=status.HTTP_200_OK)
