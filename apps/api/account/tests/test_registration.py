@@ -20,6 +20,7 @@ class RegisterViewSetTest(APITestCase):
 
     def setUp(self):
         self.register_url = reverse("register-list")
+        self.login_url = reverse("login")
         self.deleted_state = DataLookup.objects.get(
             value=AccountStateType.SUSPENDED.value)
         self.active_state = DataLookup.objects.get(
@@ -52,17 +53,34 @@ class RegisterViewSetTest(APITestCase):
         """Test successful registration of a new user."""
         email = fake.email()
         name = fake.name()
+        password = "pass1234"
+        
+        response = self.client.post(
+            self.login_url,
+            {"email": email, "password": password}
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print(response.data)
+        # Now register
         data = {
             "full_name": name,
             "email": email,
+            "password": password
         }
         response = self.client.post(self.register_url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn("email", response.data)
+        self.assertIn("success", response.data)
 
-        # Verify that user, preferences, and contact information are created
         user = User.objects.get(email=email)
         self.assertEqual(user.full_name, name)
+        
+        # Checking to relogin
+        response = self.client.post(
+            self.login_url,
+            {"email": email, "password": password}
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn("access_token", response.data)
 
     def test_register_failure_existing_phone(self):
         """Test registration failure if phone number already exists."""

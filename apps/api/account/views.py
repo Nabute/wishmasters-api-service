@@ -138,7 +138,7 @@ class TokenRefreshView(BaseTokenRefreshView):
 
 
 @extend_schema(
-    responses=RegisterSerializer
+    responses=RegisterResponseSerializer
 )
 class RegisterViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = (AllowAny,)

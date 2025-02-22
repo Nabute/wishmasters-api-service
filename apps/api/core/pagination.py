@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 class Pagination(LimitOffsetPagination):
     def get_paginated_response(self, data):
+        print(self.limit)
         return Response({
             'results': data,
             'metadata': {

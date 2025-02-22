@@ -107,13 +107,13 @@ class User(AbstractBaseUser, AbstractBaseModel):
         Role,
         blank=True,
         null=True,
-        on_delete=models.RESTRICT,
+        on_delete=models.SET_NULL,
         related_name="+"
     )
 
     state = models.ForeignKey(
         DataLookup,
-        on_delete=models.RESTRICT,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name="+",
@@ -175,6 +175,10 @@ class User(AbstractBaseUser, AbstractBaseModel):
 
     def has_module_perms(self, app_label):
         return True
+    
+    def delete(self, *args, **kwargs):
+        kwargs.pop("strict", None)
+        super().delete(*args, **kwargs)
 
     @property
     def is_staff(self):

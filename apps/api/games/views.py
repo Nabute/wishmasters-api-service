@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from core.viewset import AbstractModelViewSet
 from core.enums import SystemSettingKey
 from core.models import SystemSetting
+from games.permissions import CompetitionAccessPolicy
 
 from games.models import Competition, CompetitionEntry, Score
 from games.serializers import (
@@ -18,7 +19,7 @@ class CompetitionViewSet(AbstractModelViewSet):
     """
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated  | permissions.AllowAny, CompetitionAccessPolicy]
 
     def perform_create(self, serializer):
         """

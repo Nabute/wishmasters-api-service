@@ -214,7 +214,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
     'DEFAULT_PAGINATION_CLASS': 'core.pagination.Pagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 12
 }
 
 SPECTACULAR_SETTINGS = {

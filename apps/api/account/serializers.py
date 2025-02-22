@@ -92,7 +92,12 @@ class RegisterResponseSerializer(serializers.Serializer):
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ['id', 'full_name', 'email']
+        fields = ['id', 'full_name', 'email', 'password']
+        write_only_fields = ['password']
+        
+    def to_representation(self, instance):
+        return RegisterResponseSerializer(
+            instance).to_representation(instance)
 
     def create(self, validated_data):
         with transaction.atomic():
@@ -100,7 +105,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             validated_data['state'] = DataLookup.objects.get(
                 value=AccountStateType.ACTIVE.value)
 
-            return UserModel.objects.create_user(**validated_data)
+            UserModel.objects.create_user(**validated_data)
+            return {'success': 'Registration successfull. Please login.'} 
 
 
 class LoginSerializer(serializers.Serializer):

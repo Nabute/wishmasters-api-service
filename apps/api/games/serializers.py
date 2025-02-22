@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.utils.timezone import now
+from django.db.models import Max
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from games.models import Competition, CompetitionEntry, Score
@@ -79,6 +80,71 @@ class CompetitionResponseSerializer(BaseCompetitionSerializer):
     type = DataLookupSerializer(read_only=True)
     ranking_method = DataLookupSerializer(read_only=True)
     tiebreaker_rule = DataLookupSerializer(read_only=True)
+
+    total_players_joined = serializers.SerializerMethodField()
+    current_leader = serializers.SerializerMethodField()
+    current_user_rank = serializers.SerializerMethodField()
+
+    class Meta(BaseCompetitionSerializer.Meta):
+        fields = BaseCompetitionSerializer.Meta.fields + [
+            "total_players_joined",
+            "current_leader",
+            "current_user_rank",
+        ]
+
+    def get_total_players_joined(self, obj):
+        """
+        Returns the total number of players who have joined the competition.
+        """
+        return obj.entries.count()
+
+    def get_current_leader(self, obj):
+        """
+        Returns the player with the highest score.
+        """
+        top_score_entry = obj.entries.annotate(
+            highest_score=Max("scores__score")
+        ).order_by("-highest_score").first()
+
+        if top_score_entry and top_score_entry.highest_score is not None:
+            return {
+                "id": top_score_entry.player.id,
+                "name": top_score_entry.player.username,
+                "score": top_score_entry.highest_score,
+            }
+        return None
+    
+    def get_current_user_rank(self, obj):
+        """
+        Returns the rank of the current authenticated user in the competition.
+        - `null` if the user is not authenticated.
+        - `null` if the user has not joined the competition.
+        - Otherwise, returns the rank (1-based index).
+        """
+        request = self.context.get("request")
+        if not request or not request.user or not request.user.is_authenticated:
+            return None
+
+        user = request.user
+
+        # Check if the user has an entry in the competition
+        user_entry = obj.entries.filter(player=user).first()
+        if not user_entry:
+            # User has not joined the competition
+            return None 
+
+        # Get the ranking of all players based on their highest score
+        ranked_players = (
+            obj.entries.annotate(highest_score=Max("scores__score"))
+            .filter(highest_score__isnull=False)  # Exclude players with no score
+            .order_by("-highest_score")  # Order by highest score descending
+        )
+
+        # Create a ranking list with 1-based index
+        ranking = {entry.player.id: rank + 1 for rank, entry in enumerate(ranked_players)}
+
+        # Return the user's rank if available
+        return ranking.get(user.id)
 
 
 class CompetitionSerializer(BaseCompetitionSerializer):

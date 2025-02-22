@@ -65,7 +65,7 @@
                 "action": [
                     "create",
                     "partial_update",
-                    "delete",
+                    "delete"
                 ],
                 "principal": [
                     "role:admin"

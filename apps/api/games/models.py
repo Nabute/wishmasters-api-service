@@ -54,7 +54,8 @@ class Competition(AbstractBaseModel):
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="competitions"
+        related_name="competitions",
+        blank=True
     )
 
     type = models.ForeignKey(
