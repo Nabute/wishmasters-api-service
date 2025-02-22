@@ -84,12 +84,16 @@ class CompetitionResponseSerializer(BaseCompetitionSerializer):
     total_players_joined = serializers.SerializerMethodField()
     current_leader = serializers.SerializerMethodField()
     current_user_rank = serializers.SerializerMethodField()
+    can_submit_score = serializers.SerializerMethodField()
+    has_joined = serializers.SerializerMethodField()
 
     class Meta(BaseCompetitionSerializer.Meta):
         fields = BaseCompetitionSerializer.Meta.fields + [
             "total_players_joined",
             "current_leader",
             "current_user_rank",
+            "can_submit_score",
+            "has_joined"
         ]
 
     def get_total_players_joined(self, obj):
@@ -109,7 +113,7 @@ class CompetitionResponseSerializer(BaseCompetitionSerializer):
         if top_score_entry and top_score_entry.highest_score is not None:
             return {
                 "id": top_score_entry.player.id,
-                "name": top_score_entry.player.username,
+                "name": top_score_entry.player.full_name,
                 "score": top_score_entry.highest_score,
             }
         return None
@@ -146,6 +150,44 @@ class CompetitionResponseSerializer(BaseCompetitionSerializer):
         # Return the user's rank if available
         return ranking.get(user.id)
 
+    def get_can_submit_score(self, obj):
+        """
+        Determines whether the authenticated user can submit a score.
+        """
+        request = self.context.get("request")
+        if not request or not request.user or not request.user.is_authenticated:
+            return False
+
+        user = request.user
+
+        user_entry = obj.entries.filter(player=user).first()
+        if not user_entry:
+            return False
+
+        has_submitted_score = user_entry.scores.exists()
+
+        if not has_submitted_score:
+            return True
+
+        multi_attempt_type = DataLookup.objects.get(value=CompetitionType.MULTIPLE_ATTEMPTS.value)
+
+        if obj.type == multi_attempt_type:
+            return True
+
+        return False
+
+    def get_has_joined(self, obj):
+        """
+        Determines whether the authenticated user has joined the competition.
+        """
+        request = self.context.get("request")
+
+        if not request or not request.user or not request.user.is_authenticated:
+            return False
+
+        user = request.user
+
+        return obj.entries.filter(player=user).exists() 
 
 class CompetitionSerializer(BaseCompetitionSerializer):
 
@@ -195,20 +237,21 @@ class CompetitionSerializer(BaseCompetitionSerializer):
 ####################  COMPETITION ENTRY  ####################
 
 class BaseCompetitionEntrySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = CompetitionEntry
         fields = ['id', 'entry_fee', 'competition', 'player', 'created_at', 'updated_at']
+        read_only_fields = ['player']
 
     def validate(self, attrs):
+        """
+        Common validation logic for all CompetitionEntry serializers.
+        """
         entry_fee = attrs.get("entry_fee", 0)
         competition = attrs.get("competition")
 
-        # Ensure entry fee is positive
         if entry_fee < 0:
             raise serializers.ValidationError({"entry_fee": "Entry fee must be a positive value."})
 
-        # Ensure the competition allows this entry fee
         if competition:
             if entry_fee < competition.min_entry_fee:
                 raise serializers.ValidationError({
@@ -219,8 +262,13 @@ class BaseCompetitionEntrySerializer(serializers.ModelSerializer):
                     "entry_fee": "Entry fee cannot exceed the competition’s maximum entry fee."
                 })
 
+            if competition.is_full:
+                raise serializers.ValidationError({
+                    "competition": "This competition is full and cannot accept more entries."
+                })
+
         return attrs
-    
+ 
 
 class CompetitionEntryResponseSerializer(BaseCompetitionEntrySerializer):
     competition = serializers.StringRelatedField(read_only=True)
@@ -228,54 +276,41 @@ class CompetitionEntryResponseSerializer(BaseCompetitionEntrySerializer):
 
 
 class CompetitionEntrySerializer(BaseCompetitionEntrySerializer):
+    class Meta:
+        model = CompetitionEntry
+        fields = ['id', 'entry_fee', 'competition']
 
     def to_representation(self, instance):
-        return CompetitionEntryResponseSerializer(
-            instance, context=self.context
-        ).to_representation(instance)
+        """
+        Ensure response is serialized properly using the response serializer.
+        """
+        return CompetitionEntryResponseSerializer(instance, context=self.context).data
     
-    def validate(self, attrs):
+    def check_duplicate_entry(self, competition, player):
         """
-        Validate competition entry before saving.
+        Check if the player is already registered in a SINGLE_ATTEMPT competition.
         """
-        competition = attrs.get("competition")
-
-        if competition.is_full:
-            raise serializers.ValidationError(
-                {"competition": "This competition has reached the maximum number of players and cannot accept more entries."}
-            )
-
-        return super().validate(attrs)
+        if CompetitionEntry.objects.filter(
+                competition=competition,
+                player=player,
+                competition__type__value=CompetitionType.SINGLE_ATTEMPT.value).exists():
+            raise serializers.ValidationError({"player": "Player is already registered in this competition."})
 
     def create(self, validated_data):
         """
-        Create a new CompetitionEntry instance while ensuring constraints.
+        Assign player from request and prevent duplicate competition entries.
         """
-        request = self.context.get("request", None)
+        request = self.context.get("request")
 
-        # Assign player from request if available
         if request and request.user:
             validated_data["player"] = request.user
 
-        # Ensure the player is not already registered in the competition
         competition = validated_data["competition"]
         player = validated_data["player"]
 
-        if CompetitionEntry.objects.filter(competition=competition, player=player).exists():
-            raise serializers.ValidationError(
-                {"player": "Player is already registered in this competition."}
-            )
+        self.check_duplicate_entry(competition, player)
 
         return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        """
-        Update an existing CompetitionEntry instance while ensuring values are properly managed.
-        """
-        instance.entry_fee = validated_data.get("entry_fee", instance.entry_fee)
-
-        instance.save()
-        return instance
 
 
 ####################  SCORE  ####################
@@ -312,14 +347,15 @@ class BaseScoreSerializer(serializers.ModelSerializer):
                 {"player": "You are not allowed to submit a score for this entry."})
 
         # Ensure scores cannot be submitted after the competition's end_time
-        if competition.end_time and now().time() > competition.end_time:
+        if competition.end_time and now() > competition.end_time:
             raise serializers.ValidationError(
                 {"competition": "The competition has ended. Scores cannot be submitted."})
 
         # Ensure the player hasn’t exceeded the max_score_per_player limit
-        if competition.scores.filter(entry__player=player).count() >= competition.max_score_per_player:
+        if Score.objects.filter(entry__competition=competition, entry__player=player).count() >= competition.max_score_per_player:
             raise serializers.ValidationError(
-                {"score": "You have reached the maximum number of score submissions allowed in this competition."})
+                {"score": "You have reached the maximum number of score submissions allowed in this competition."}
+            )
 
         return attrs
     

@@ -35,8 +35,7 @@ class Competition(AbstractBaseModel):
     )
 
     max_score_per_player = models.IntegerField(
-        default=1,
-        verbose_name=_("Maximum number of times a player can submit score(s).")
+        default=1
     )
 
     start_time = models.DateTimeField(
@@ -156,7 +155,7 @@ class CompetitionEntry(AbstractBaseModel):
         ]
 
     def __str__(self):
-        return f"{self.user} in {self.competition}"
+        return f"{self.player} in {self.competition}"
 
 
 class Score(AbstractBaseModel):
@@ -177,4 +176,4 @@ class Score(AbstractBaseModel):
         db_table = "score"
 
     def __str__(self):
-        return f"{self.user} - {self.score}"
+        return f"{self.entry.player} - {self.score}"
